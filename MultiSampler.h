@@ -58,8 +58,18 @@ public:
     }
 
     void setParam(string sample_name, string param_name, float value){
-        if (samplers.count(sample_name)>0)
-            samplers.at(sample_name).setParam(param_name, value);
+        if (sample_name == "ALL"){
+            std::map<string, Sampler>::iterator it = samplers.begin();
+            while (it != samplers.end())
+            {
+                it->second.setParam(param_name, value);
+                it++;
+            }
+        }
+        else {
+            if (samplers.count(sample_name)>0)
+                samplers.at(sample_name).setParam(param_name, value);
+        }
     }
 
     void trigger(string sample_name, bool interrupt=true){

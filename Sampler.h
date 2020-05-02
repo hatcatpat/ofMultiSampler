@@ -12,8 +12,10 @@ public:
     void setup(string fileName="sounds/kick.wav"){
 
         name = fileName;
+//        ofLog(OF_LOG_NOTICE, name);
         audioFile.load ("../bin/data/sounds/"+fileName+".wav");
-        audioFile.printSummary();
+//        audioFile.printSummary();
+//        ofLog(OF_LOG_NOTICE, "");
         sampleRate = audioFile.getSampleRate();
         numSamples = audioFile.getNumSamplesPerChannel();
         numChannels = audioFile.getNumChannels();
@@ -61,15 +63,20 @@ public:
     };
 
     void trigger(bool interrupt=true){
-        if (interrupt){
+        if (params["looping"]){
             params["active"] = true;
-            if (params["pitch"] > 0){
-                index = params["start"];
+        }
+        else {
+            if (interrupt){
+                params["active"] = true;
+                if (params["pitch"] > 0){
+                    index = params["start"];
+                } else {
+                    index = params["end"]-1;
+                }
             } else {
-                index = params["end"]-1;
+                params["active"] = true;
             }
-        } else {
-            params["active"] = true;
         }
     }
 
@@ -88,7 +95,6 @@ public:
     }
 
     void setStart(float new_start){
-        ofLog(OF_LOG_NOTICE, ofToString(params["start"])+" START" );
         int start_sample = (int) (numSamples-1)*new_start;
         params["start"] = start_sample <= numSamples-1 ? start_sample : numSamples-1;
     }
@@ -96,7 +102,6 @@ public:
         params["len"] = new_len;
         float end = params["start"]+new_len*( numSamples-1-params["start"] );
         params["end"] = end <= numSamples-1 ? end : numSamples-1;
-        ofLog(OF_LOG_NOTICE, ofToString(params["end"])+" END" );
     }
 
     void draw_graph(float x, float y, float width, float height){
